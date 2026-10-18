@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Чи зможеш ти бути трейдером? | Інтерактивний Тест</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0B0E14;
+            --bg-card: rgba(22, 27, 38, 0.75);
+            --bg-card-hover: rgba(30, 38, 54, 0.85);
+            --accent-green: #00F5A0;
+            --accent-green-glow: rgba(0, 245, 160, 0.35);
+            --accent-blue: #00D2FF;
+            --text-main: #F0F4F8;
+            --text-muted: #94A3B8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 245, 160, 0.3);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 245, 160, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 210, 255, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 245, 160, 0.1);
+            border: 1px solid rgba(0, 245, 160, 0.25);
+            color: var(--accent-green);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #FFFFFF 30%, #A5B4FC 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #00D2FF 100%);
+            color: #0B0E14;
+            border: none;
+            padding: 18px 24px;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 25px var(--accent-green-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .quiz-header {
+            margin-bottom: 24px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            border-radius: 100px;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-step-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: left;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 500;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .option-letter {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .option-btn:active {
+            border-color: var(--accent-green);
+            background: rgba(0, 245, 160, 0.08);
+            transform: scale(0.99);
+        }
+
+        .result-card {
+            text-align: center;
+        }
+
+        .result-score-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 245, 160, 0.15) 0%, transparent 70%);
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 30px var(--accent-green-glow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+        }
+
+        .result-score-num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1;
+        }
+
+        .result-score-label {
+            font-size: 0.65rem;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+
+        .archetype-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-bottom: 8px;
+        }
+
+        .archetype-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 24px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: var(--radius-md);
+        }
+
+        .actions-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent-green);
+            color: #0B0E14;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active">
+        <div class="badge"><div class="badge-dot"></div> Трейдинг & Інвестиції</div>
+        <h1>Чи зможеш ти бути трейдером?</h1>
+        <p class="subtitle">Пройди інтерактивний експрес-тест із 8 питань і дізнайся свій рівень готовності до торгівлі на фінансових ринках.</p>
+        <button class="btn-primary" onclick="startQuiz()">
+            Пройти тест
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="screen">
+        <div class="quiz-header">
+            <div class="quiz-step-text">
+                <span>Питання <span id="current-step">1</span> з 8</span>
+                <span id="step-percent">12%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progress-bar" class="progress-bar-fill"></div>
+            </div>
+        </div>
+        
+        <h2 id="question-text" class="question-title">Завантаження...</h2>
+        <div id="options-container" class="options-list"></div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen result-card">
+        <div class="badge"><div class="badge-dot"></div> Результат аналізу</div>
+        
+        <div class="result-score-circle">
+            <div id="score-val" class="result-score-num">85%</div>
+            <div class="result-score-label">Готовність</div>
+        </div>
+
+        <h2 id="archetype-title" class="archetype-title">Системний Стратег</h2>
+        <div id="archetype-desc" class="archetype-desc"></div>
+
+        <div class="actions-group">
+            <button class="btn-primary" onclick="copyResultForStories()">
+                Скопіювати результат для Сторіс
+            </button>
+            <a href="https://ig.me/m/nadiacryptos" target="_blank" class="btn-secondary">
+                Написати експерту в Direct
+            </a>
+            <button class="btn-secondary" onclick="restartQuiz()" style="border:none; color: var(--text-muted); font-size: 0.85rem;">
+                Пройти тест заново
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div id="toast" class="toast">Текст результату скопійовано!</div>
+
+<script>
+    const questions = [
+        {
+            q: "1. Що ти робиш, коли бачиш, що твоя угода пішла в мінус на 10%?",
+            options: [
+                { text: "Панікую та закриваю все, щоб зберегти хоча б щось!", type: "C" },
+                { text: "Спокійно дивлюся на свій план і чекаю розвитку подій.", type: "A" },
+                { text: "Купую ще, адже зараз чудова знижка!", type: "B" }
+            ]
+        },
+        {
+            q: "2. Як у тебе з математикою, аналітикою та дисципліною?",
+            options: [
+                { text: "Терпіти не можу цифри й графіки, розраховую на інтуїцію.", type: "C" },
+                { text: "Не експерт, але в базових графіках та таблицях розбираюся.", type: "A" },
+                { text: "Обожнюю аналізувати дані, шукати закономірності та цифри.", type: "B" }
+            ]
+        },
+        {
+            q: "3. Чи втрачав(ла) ти гроші коли-небудь в житті?",
+            options: [
+                { text: "Так, і це був важливий досвід, який навчив мене аналізувати помилки.", type: "A" },
+                { text: "Так, це викликало емоції, але я швидко рухаюся далі.", type: "B" },
+                { text: "Ні, я дуже боюся втратити навіть невелику суму.", type: "C" }
+            ]
+        },
+        {
+            q: "4. Чи зможеш ти торгувати на демо-рахунку доти, доки не почне виходити стабільний плюс?",
+            options: [
+                { text: "Так, дисципліна та відпрацювання стратегії для мене на першому місці.", type: "A" },
+                { text: "Спробую 1-2 тижні, але швидко захочеться реальних грошей.", type: "B" },
+                { text: "Ні, на демо не той драйв, хочу одразу торгувати на реальні гроші.", type: "C" }
+            ]
+        },
+        {
+            q: "5. Трейдинг це робота/бізнес чи казино? Твоя думка:",
+            options: [
+                { text: "Це чітка робота з ризиками, математикою та правилами.", type: "A" },
+                { text: "Гібрид: тут потрібен розрахунок, але є елемент удачі.", type: "B" },
+                { text: "Це швидко вгадати куди піде графік та зловити легкі гроші.", type: "C" }
+            ]
+        },
+        {
+            q: "6. Як ти ставишся до ризику?",
+            options: [
+                { text: "Терпіти не можу ризик, краще синиця в руках.", type: "C" },
+                { text: "Ризик має бути чітко розрахований: ризикнув 1% — виграв 3%.", type: "A" },
+                { text: "Люблю адреналін, торгую на все — все або нічого!", type: "B" }
+            ]
+        },
+        {
+            q: "7. Що для тебе емоції під час прийняття важливих рішень?",
+            options: [
+                { text: "Часто приймаю рішення на емоціях чи під впливом імпульсу.", type: "C" },
+                { text: "Умію вчасно зупинитися, якщо відчуваю, що емоції беруть верх.", type: "A" },
+                { text: "Холодний розрахунок і дію строго за алгоритмом.", type: "B" }
+            ]
+        },
+        {
+            q: "8. Скільки часу ти готовий(а) приділяти навчанню та ринку щодня?",
+            options: [
+                { text: "Хочу натиснути одну кнопку й одразу отримати прибуток.", type: "C" },
+                { text: "1–2 години на день, системно та без поспіху.", type: "A" },
+                { text: "Готов(а) зануритися з головою на 4+ години щодня.", type: "B" }
+            ]
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = { A: 0, B: 0, C: 0 };
+    let finalArchetype = "";
+
+    function startQuiz() {
+        showScreen('quiz-screen');
+        currentQuestionIndex = 0;
+        score = { A: 0, B: 0, C: 0 };
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = q.q;
+        document.getElementById('current-step').innerText = currentQuestionIndex + 1;
+        
+        const percent = Math.round(((currentQuestionIndex + 1) / questions.length) * 100);
+        document.getElementById('step-percent').innerText = percent + '%';
+        document.getElementById('progress-bar').style.width = percent + '%';
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        const letters = ['A', 'B', 'C'];
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.onclick = () => selectOption(opt.type);
+            btn.innerHTML = `
+                <div class="option-letter">${letters[idx]}</div>
+                <div>${opt.text}</div>
+            `;
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(type) {
+        score[type]++;
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            renderQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        showScreen('result-screen');
+        
+        let scorePercent = 0;
+        let title = "";
+        let desc = "";
+
+        if (score.A >= score.B && score.A >= score.C) {
+            scorePercent = Math.min(95, 75 + (score.A * 3));
+            title = "Системний Стратег 🧠";
+            desc = "<b>Твій потенціал: ВІДМІННИЙ</b><br><br>Ти сприймаєш трейдинг як бізнес та аналітику, а не казино. У тебе є головне для трейдера — дисципліна, системний підхід і холодний розум. З правильним навчанням та алгоритмами ти зможеш стабільно заробляти.";
+            finalArchetype = "Системний Стратег 🧠 (Готовність " + scorePercent + "%)";
+        } else if (score.B >= score.A && score.B >= score.C) {
+            scorePercent = Math.min(90, 65 + (score.B * 3));
+            title = "Динамічний Аналітик ⚡️";
+            desc = "<b>Твій потенціал: ВИСОКИЙ</b><br><br>Ти бачиш можливості там, де інші бояться, і готовий(а) активно занурюватися в ринок. Головне для тебе — суворо дотримуватися ризик-менеджменту та стримувати азарт, щоб не заходити в угоди на емоціях.";
+            finalArchetype = "Динамічний Аналітик ⚡️ (Готовність " + scorePercent + "%)";
+        } else {
+            scorePercent = Math.max(35, 50 - (score.C * 3));
+            title = "Емоційний Гравець 🎯";
+            desc = "<b>Твій потенціал: ПОТРЕБУЄ ПІДГОТОВКИ</b><br><br>Трейдинг для тебе поки здається занадто емоційним чи легким шляхом. Тобі важливо спочатку навчитися керувати ризиками та сприймати ринок як систему, щоб зберегти свій депозит.";
+            finalArchetype = "Емоційний Гравець 🎯 (Готовність " + scorePercent + "%)";
+        }
+
+        document.getElementById('score-val').innerText = scorePercent + '%';
+        document.getElementById('archetype-title').innerText = title;
+        document.getElementById('archetype-desc').innerHTML = desc;
+    }
+
+    function copyResultForStories() {
+        const textToCopy = `Я пройшов(ла) тест «Чи зможеш ти бути трейдером?» 📈\n\nМій результат: ${finalArchetype}\n\nПройди тест у шапці профілю!🎯`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        });
+    }
+
+    function restartQuiz() {
+        showScreen('start-screen');
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
